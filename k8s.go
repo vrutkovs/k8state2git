@@ -81,15 +81,78 @@ func storeGlobals(client corev1.CoreV1Interface, path string) {
 	fmt.Println("Created", globalsPath)
 
 	storePersistentVolumes(client, globalsPath, serializer)
-
+	// storeSecurityContextConstraints(client, globalsPath, serializer)
+	// storeClusterRoles(client, globalsPath, serializer)
+	// storeClusterRoleBindings(client, globalsPath, serializer)
 }
 
 // Get a list of namespaces
 func getNamespaces(client corev1.CoreV1Interface) []string {
-	return make([]string, 3)
+	fmt.Println("Fetching namespaces")
+	nsList, err := client.Namespaces().List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+	result := make([]string, len(nsList.Items))
+	for i, ns := range nsList.Items {
+		result[i] = ns.Name
+	}
+	return result
 }
 
 // Store namespace objects
-func storeNamespaces(namespace string, path string) {
+func storeNamespace(client corev1.CoreV1Interface, namespace string, path string) {
+	ns, err := client.Namespaces().Get(namespace, metav1.GetOptions{})
+	if err != nil {
+		// TODO collect errs here instead of panicking
+		panic(err)
+	}
 
+	name := ns.Name
+
+	// TODO: serialize namespace
+	/* var buf bytes.Buffer
+	err = serializer.Encode(&ns, &buf)
+	if err != nil {
+		// TODO collect errs here instead of panicking
+		panic(err)
+	}
+	err = storeObject(&buf, name, path)
+	if err != nil {
+		// TODO collect errs here instead of panicking
+		panic(err)
+	} */
+
+	namespacePath := filepath.Join(path, name)
+	os.Mkdir(namespacePath, os.ModePerm)
+	fmt.Println("Created", namespacePath)
+
+	// TODO: secrets are forbidden
+	// storeSecrets(client, namespacePath, serializer, name)
+}
+
+// Store secrets
+func storeSecrets(client corev1.CoreV1Interface, pathPrefix string, serializer *json.Serializer, namespace string) {
+	fmt.Println("\tStoring secrets")
+	secretsList, err := client.Secrets(namespace).List(metav1.ListOptions{})
+	if err != nil {
+		// TODO collect errs here instead of panicking
+		panic(err)
+	}
+
+	// Save each volume
+	for _, secret := range secretsList.Items {
+		name := secret.Name
+		var buf bytes.Buffer
+		err = serializer.Encode(&secret, &buf)
+		if err != nil {
+			// TODO collect errs here instead of panicking
+			panic(err)
+		}
+		err = storeObject(&buf, name, pathPrefix)
+		if err != nil {
+			// TODO collect errs here instead of panicking
+			panic(err)
+		}
+	}
 }

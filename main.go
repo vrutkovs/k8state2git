@@ -22,7 +22,7 @@ func saveClusterState(clientset *kubernetes.Clientset) {
 	storeGlobals(client, path)
 	namespaces := getNamespaces(client)
 	for _, namespace := range namespaces {
-		storeNamespaces(namespace, path)
+		storeNamespace(client, namespace, path)
 	}
 
 	gitCommit(path)
