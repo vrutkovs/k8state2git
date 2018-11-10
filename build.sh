@@ -3,8 +3,8 @@ set -eux
 
 # Do `podman login` first!
 
-release=28
-baselabel=vrutkovs/base-28
+release=29
+baselabel=vrutkovs/base-29
 label=vrutkovs/k8state2git
 cmd=/bin/k8state2git
 deps="glibc ca-certificates"
