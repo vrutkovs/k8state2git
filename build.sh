@@ -26,6 +26,7 @@ if ! podman images localhost/$baselabel; then
     dnf clean all -y --installroot $scratchmnt --releasever $release
     buildah unmount $cachecontainer
     buildah commit $cachecontainer $baselabel
+    podman push localhost/$baselabel docker.io/$label:base
 fi
 
 # run the build
