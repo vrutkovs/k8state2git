@@ -45,4 +45,3 @@ buildah unmount $newcontainer
 buildah commit $newcontainer $label
 
 podman push localhost/$label docker.io/$label
-oc import-image k8state2git -n k8state2git
