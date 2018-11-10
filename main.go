@@ -8,14 +8,26 @@ import (
 // Connect to k8s and save all objects
 func saveClusterState(clientset *kubernetes.Clientset) {
 	var client = clientset.CoreV1()
-	path := cloneRepo()
+	path, err := cloneRepo()
+	if err != nil {
+		panic(err.Error())
+	}
+	if err := gitConfig(path); err != nil {
+		panic(err.Error())
+	}
+	if err := cleanRepo(path); err != nil {
+		panic(err.Error())
+	}
+
 	storeGlobals(client, path)
 	namespaces := getNamespaces(client)
 	for _, namespace := range namespaces {
 		storeNamespaces(namespace, path)
 	}
+
 	gitCommit(path)
 	gitPush(path)
+
 }
 
 func main() {
