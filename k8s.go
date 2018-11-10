@@ -37,7 +37,7 @@ func storeObject(buffer *bytes.Buffer, name string, pathPrefix string) error {
 	}
 	w.Flush()
 
-	fmt.Println("\tStored ", name, " in ", filePath)
+	fmt.Println("\tStored", name, "in", filePath)
 	return nil
 }
 
@@ -48,7 +48,7 @@ func storePersistentVolumes(client corev1.CoreV1Interface, path string, serializ
 	// Make directory for persistent volumes
 	pathPrefix := filepath.Join(path, "persistentvolumes")
 	os.Mkdir(pathPrefix, os.ModePerm)
-	fmt.Println("\tCreated ", pathPrefix)
+	fmt.Println("\tCreated", pathPrefix)
 
 	// List volumes
 	pvList, err := client.PersistentVolumes().List(metav1.ListOptions{})
@@ -78,7 +78,7 @@ func storeGlobals(client corev1.CoreV1Interface, path string) {
 	// Make directory for globals
 	globalsPath := filepath.Join(path, "globals")
 	os.Mkdir(globalsPath, os.ModePerm)
-	fmt.Println("Created ", globalsPath)
+	fmt.Println("Created", globalsPath)
 
 	storePersistentVolumes(client, globalsPath, serializer)
 
