@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eux
 
-# Do `podman login` and `oc login` previosly!
+# Do `podman login` first!
 
 release=28
 baselabel=vrutkovs/base-28
@@ -10,7 +10,7 @@ cmd=/bin/k8state2git
 deps="glibc ca-certificates"
 
 # pre - install tools
-dnf install -y podman buildah origin-clients
+dnf install -y podman buildah
 
 # prepare tmpfs storage and build base container
 if ! ls /var/lib/containers/storage; then
