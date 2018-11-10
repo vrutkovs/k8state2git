@@ -6,8 +6,8 @@ set -eux
 release=29
 baselabel=vrutkovs/base-29
 label=vrutkovs/k8state2git
-cmd=/bin/k8state2git
 deps="glibc ca-certificates"
+cmd=k8state2git
 
 # pre - install tools
 dnf install -y podman buildah
@@ -38,8 +38,8 @@ go build
 # put the binary in the container and commit changes
 newcontainer=$(buildah from ${baselabel})
 scratchmnt=$(buildah mount $newcontainer)
-cp k8state2git $scratchmnt/usr/local/bin
-buildah config --cmd /usr/local/bin/k8state2git $newcontainer
+cp $cmd $scratchmnt/usr/local/bin
+buildah config --cmd /usr/local/bin/$cmd $newcontainer
 buildah config --label name=$label $newcontainer
 buildah unmount $newcontainer
 buildah commit $newcontainer $label
