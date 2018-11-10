@@ -7,7 +7,7 @@ release=29
 baselabel=vrutkovs/base-29
 label=vrutkovs/k8state2git
 cmd=k8state2git
-deps="glibc ca-certificates git-core"
+deps="glibc glibc-minimal-langpack ca-certificates git-core"
 
 # pre - install tools
 dnf install -y podman buildah
