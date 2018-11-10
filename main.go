@@ -6,7 +6,10 @@ import (
 	"strings"
 	"time"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/client-go/kubernetes"
+	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 )
@@ -16,13 +19,24 @@ func cloneRepo() string {
 	return "/foo"
 }
 
+func storePersistentVolumes(client corev1.CoreV1Interface, path string) {
+	pvList, err := client.PersistentVolumes().List(metav1.ListOptions{})
+	if err != nil {
+		panic(err.Error())
+	}
+	for _, pv := range pvList.Items {
+		fmt.Println("Found ", pv.Name)
+	}
+}
+
 // Store global k8s objects
-func storeGlobals(client rest.Interface, path string) {
+func storeGlobals(client corev1.CoreV1Interface, path string) {
+	storePersistentVolumes(client, path)
 
 }
 
 // Get a list of namespaces
-func getNamespaces(client rest.Interface) []string {
+func getNamespaces(client corev1.CoreV1Interface) []string {
 	return make([]string, 3)
 }
 
@@ -42,7 +56,7 @@ func gitPush(path string) {
 }
 
 func saveClusterState(clientset *kubernetes.Clientset) {
-	var client = clientset.Core().RESTClient()
+	var client = clientset.CoreV1()
 	path := cloneRepo()
 	storeGlobals(client, path)
 	namespaces := getNamespaces(client)
