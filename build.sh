@@ -30,11 +30,12 @@ fi
 
 # run the build
 dnf install -y golang godep
+export GOPATH=/go
 cd /go/src/github.com/$label
 dep ensure
 go build
 
-# put the binary in the container and build a new one
+# put the binary in the container and commit changes
 newcontainer=$(buildah from ${baselabel})
 scratchmnt=$(buildah mount $newcontainer)
 cp k8state2git $scratchmnt/usr/local/bin
