@@ -23,6 +23,7 @@ func cloneRepo() string {
 	return "/repo"
 }
 
+// Saves serialized object in a file
 func storeObject(buffer *bytes.Buffer, name string, pathPrefix string) error {
 	filePath, err := filepath.Abs(filepath.Join(pathPrefix, fmt.Sprintf("%s.yml", name)))
 	if err != nil {
@@ -47,6 +48,7 @@ func storeObject(buffer *bytes.Buffer, name string, pathPrefix string) error {
 	return nil
 }
 
+// Fetch PVs and save in the file
 func storePersistentVolumes(client corev1.CoreV1Interface, path string, serializer *json.Serializer) {
 	fmt.Println("Storing PersistentVolumes")
 
@@ -109,6 +111,7 @@ func gitPush(path string) {
 
 }
 
+// Connect to k8s and save all objects
 func saveClusterState(clientset *kubernetes.Clientset, serializer *json.Serializer) {
 	var client = clientset.CoreV1()
 	path := cloneRepo()
